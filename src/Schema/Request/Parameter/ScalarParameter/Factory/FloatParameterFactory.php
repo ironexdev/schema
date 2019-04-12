@@ -1,8 +1,8 @@
 <?php
 
-namespace App\IronexSchema\Request\Parameter\ScalarParameter\Factory;
+namespace Ironex\Schema\Request\Parameter\ScalarParameter\Factory;
 
-use App\IronexSchema\Request\Parameter\ScalarParameter\FloatParameter;
+use Ironex\Schema\Request\Parameter\ScalarParameter\FloatParameter;
 
 class FloatParameterFactory
 {

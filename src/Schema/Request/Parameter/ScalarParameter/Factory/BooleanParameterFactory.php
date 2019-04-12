@@ -1,8 +1,8 @@
 <?php
 
-namespace App\IronexSchema\Request\Parameter\ScalarParameter\Factory;
+namespace Ironex\Schema\Request\Parameter\ScalarParameter\Factory;
 
-use App\IronexSchema\Request\Parameter\ScalarParameter\BooleanParameter;
+use Ironex\Schema\Request\Parameter\ScalarParameter\BooleanParameter;
 
 class BooleanParameterFactory
 {

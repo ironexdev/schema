@@ -1,11 +1,11 @@
 <?php
 
-namespace App\IronexSchema\Request\Parameter\ScalarParameter;
+namespace Ironex\Schema\Request\Parameter\ScalarParameter;
 
-use App\IronexSchema\Request\Enum\ErrorEnum;
-use App\IronexSchema\Request\Enum\ParameterTypeEnum;
-use App\IronexSchema\Request\Parameter\ParameterInterface;
-use App\IronexSchema\Request\Parameter\ScalarParameter\Rule\RuleInterface;
+use Ironex\Schema\Request\Enum\ErrorEnum;
+use Ironex\Schema\Request\Enum\ParameterTypeEnum;
+use Ironex\Schema\Request\Parameter\ParameterInterface;
+use Ironex\Schema\Request\Parameter\ScalarParameter\Rule\RuleInterface;
 
 abstract class AbstractScalarParameter implements ScalarParameterInterface, ParameterInterface
 {

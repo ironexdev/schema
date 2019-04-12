@@ -1,8 +1,8 @@
 <?php
 
-namespace App\IronexSchema\Request\Parameter\ScalarParameter\Rule;
+namespace Ironex\Schema\Request\Parameter\ScalarParameter\Rule;
 
-use App\IronexSchema\Request\Enum\ErrorEnum;
+use Ironex\Schema\Request\Enum\ErrorEnum;
 
 class MaxLengthRule implements RuleInterface
 {

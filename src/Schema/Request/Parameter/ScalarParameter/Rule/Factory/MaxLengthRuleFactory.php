@@ -1,8 +1,8 @@
 <?php
 
-namespace App\IronexSchema\Request\Parameter\ScalarParameter\Rule\Factory;
+namespace Ironex\Schema\Request\Parameter\ScalarParameter\Rule\Factory;
 
-use App\IronexSchema\Request\Parameter\ScalarParameter\Rule\MaxLengthRule;
+use Ironex\Schema\Request\Parameter\ScalarParameter\Rule\MaxLengthRule;
 
 class MaxLengthRuleFactory
 {

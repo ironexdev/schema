@@ -1,12 +1,12 @@
 <?php
 
-namespace App\IronexSchema\Request\Parameter\ObjectParameter;
+namespace Ironex\Schema\Request\Parameter\ObjectParameter;
 
-use App\IronexSchema\Request\Enum\ErrorEnum;
-use App\IronexSchema\Request\Enum\ParameterTypeEnum;
-use App\IronexSchema\Request\Parameter\ArrayParameter\ArrayParameter;
-use App\IronexSchema\Request\Parameter\ParameterInterface;
-use App\IronexSchema\Request\Parameter\ScalarParameter\ScalarParameterInterface;
+use Ironex\Schema\Request\Enum\ErrorEnum;
+use Ironex\Schema\Request\Enum\ParameterTypeEnum;
+use Ironex\Schema\Request\Parameter\ArrayParameter\ArrayParameter;
+use Ironex\Schema\Request\Parameter\ParameterInterface;
+use Ironex\Schema\Request\Parameter\ScalarParameter\ScalarParameterInterface;
 
 abstract class AbstractObjectParameter implements ObjectParameterInterface, ParameterInterface
 {

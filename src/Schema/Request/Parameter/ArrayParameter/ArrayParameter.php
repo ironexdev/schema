@@ -1,10 +1,10 @@
 <?php
 
-namespace App\IronexSchema\Request\Parameter\ArrayParameter;
+namespace Ironex\Schema\Request\Parameter\ArrayParameter;
 
-use App\IronexSchema\Request\Enum\ErrorEnum;
-use App\IronexSchema\Request\Enum\ParameterTypeEnum;
-use App\IronexSchema\Request\Parameter\ParameterInterface;
+use Ironex\Schema\Request\Enum\ErrorEnum;
+use Ironex\Schema\Request\Enum\ParameterTypeEnum;
+use Ironex\Schema\Request\Parameter\ParameterInterface;
 
 class ArrayParameter implements ParameterInterface
 {

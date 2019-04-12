@@ -1,8 +1,8 @@
 <?php
 
-namespace App\IronexSchema\Request\Parameter\ScalarParameter;
+namespace Ironex\Schema\Request\Parameter\ScalarParameter;
 
-use App\IronexSchema\Request\Enum\ParameterTypeEnum;
+use Ironex\Schema\Request\Enum\ParameterTypeEnum;
 use Error;
 
 class IntegerParameter extends AbstractScalarParameter

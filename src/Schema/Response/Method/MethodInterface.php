@@ -1,6 +1,6 @@
 <?php
 
-namespace App\IronexSchema\Response\Method;
+namespace Ironex\Schema\Response\Method;
 
 interface MethodInterface
 {

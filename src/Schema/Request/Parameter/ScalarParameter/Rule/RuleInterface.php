@@ -1,6 +1,6 @@
 <?php
 
-namespace App\IronexSchema\Request\Parameter\ScalarParameter\Rule;
+namespace Ironex\Schema\Request\Parameter\ScalarParameter\Rule;
 
 interface RuleInterface
 {

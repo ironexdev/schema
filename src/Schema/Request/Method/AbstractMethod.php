@@ -1,12 +1,12 @@
 <?php
 
-namespace App\IronexSchema\Request\Method;
+namespace Ironex\Schema\Request\Method;
 
-use App\IronexSchema\Request\Enum\ErrorEnum;
-use App\IronexSchema\Request\Parameter\ArrayParameter\ArrayParameter;
-use App\IronexSchema\Request\Parameter\ObjectParameter\ObjectParameterInterface;
-use App\IronexSchema\Request\Parameter\ParameterInterface;
-use App\IronexSchema\Request\Parameter\ScalarParameter\ScalarParameterInterface;
+use Ironex\Schema\Request\Enum\ErrorEnum;
+use Ironex\Schema\Request\Parameter\ArrayParameter\ArrayParameter;
+use Ironex\Schema\Request\Parameter\ObjectParameter\ObjectParameterInterface;
+use Ironex\Schema\Request\Parameter\ParameterInterface;
+use Ironex\Schema\Request\Parameter\ScalarParameter\ScalarParameterInterface;
 
 abstract class AbstractMethod implements MethodInterface
 {

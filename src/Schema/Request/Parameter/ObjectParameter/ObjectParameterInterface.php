@@ -1,6 +1,6 @@
 <?php
 
-namespace App\IronexSchema\Request\Parameter\ObjectParameter;
+namespace Ironex\Schema\Request\Parameter\ObjectParameter;
 
 interface ObjectParameterInterface
 {

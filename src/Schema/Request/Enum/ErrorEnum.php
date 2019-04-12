@@ -1,6 +1,6 @@
 <?php
 
-namespace App\IronexSchema\Request\Enum;
+namespace Ironex\Schema\Request\Enum;
 
 class ErrorEnum
 {

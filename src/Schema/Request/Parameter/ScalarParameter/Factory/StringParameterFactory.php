@@ -1,10 +1,10 @@
 <?php
 
-namespace App\IronexSchema\Request\Parameter\ScalarParameter\Factory;
+namespace Ironex\Schema\Request\Parameter\ScalarParameter\Factory;
 
-use App\IronexSchema\Request\Parameter\ScalarParameter\Rule\Factory\MaxLengthRuleFactory;
-use App\IronexSchema\Request\Parameter\ScalarParameter\Rule\Factory\MinLengthRuleFactory;
-use App\IronexSchema\Request\Parameter\ScalarParameter\StringParameter;
+use Ironex\Schema\Request\Parameter\ScalarParameter\Rule\Factory\MaxLengthRuleFactory;
+use Ironex\Schema\Request\Parameter\ScalarParameter\Rule\Factory\MinLengthRuleFactory;
+use Ironex\Schema\Request\Parameter\ScalarParameter\StringParameter;
 use DI\Annotation\Inject;
 
 class StringParameterFactory

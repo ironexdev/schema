@@ -1,9 +1,9 @@
 <?php
 
-namespace App\IronexSchema\Request\Parameter\ArrayParameter\Factory;
+namespace Ironex\Schema\Request\Parameter\ArrayParameter\Factory;
 
-use App\IronexSchema\Request\Parameter\ArrayParameter\ArrayParameter;
-use App\IronexSchema\Request\Parameter\ParameterInterface;
+use Ironex\Schema\Request\Parameter\ArrayParameter\ArrayParameter;
+use Ironex\Schema\Request\Parameter\ParameterInterface;
 
 class ArrayParameterFactory
 {

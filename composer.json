@@ -1,0 +1,13 @@
+{
+  "autoload": {
+    "psr-4": {
+      "Ironex\\": "src/"
+    }
+  },
+  "name": "ironex/schema",
+  "require": {
+    "php": "7.2.5",
+    "php-di/php-di": "^6.0",
+    "doctrine/annotations": "^1.6"
+  }
+}

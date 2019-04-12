@@ -5,7 +5,7 @@ use DI\ContainerBuilder;
 use DI\DependencyException;
 use DI\NotFoundException;
 
-require __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+require __DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
 (function () {
 	$apiDirectory = __DIR__ . DIRECTORY_SEPARATOR;

@@ -5,6 +5,7 @@
     }
   },
   "name": "ironex/schema",
+  "license": "MIT",
   "require": {
     "php": "7.2.5",
     "php-di/php-di": "^6.0",

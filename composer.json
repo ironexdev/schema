@@ -7,7 +7,7 @@
   "name": "ironex/schema",
   "license": "MIT",
   "bin": [
-    "/bin/generate-ironex-schema"
+    "bin/generate-ironex-schema.php"
   ],
   "require": {
     "php": "7.2.5",

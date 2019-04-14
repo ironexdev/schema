@@ -21,6 +21,17 @@ abstract class AbstractMethod implements MethodInterface
     protected $parameters = [];
 
     /**
+     * @param ParameterInterface $parameter
+     * @return ParameterInterface
+     */
+    public function addParameter(ParameterInterface $parameter): ParameterInterface
+    {
+        $this->parameters[] = $parameter;
+
+        return $parameter;
+    }
+
+    /**
      * @return array
      */
     public function getDefinition(): array
@@ -29,7 +40,7 @@ abstract class AbstractMethod implements MethodInterface
 
         foreach($this->parameters as $parameter)
         {
-            $definition["parameters"][$parameter->getName()] = $parameter->getDefinition();
+            $definition[$parameter->getName()] = $parameter->getDefinition();
         }
 
         return $definition;
@@ -53,17 +64,6 @@ abstract class AbstractMethod implements MethodInterface
         }
 
         return $errors;
-    }
-
-    /**
-     * @param ParameterInterface $parameter
-     * @return ParameterInterface
-     */
-    public function addParameter(ParameterInterface $parameter): ParameterInterface
-    {
-        $this->parameters[] = $parameter;
-
-        return $parameter;
     }
 
     /**

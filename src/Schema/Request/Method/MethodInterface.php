@@ -2,8 +2,16 @@
 
 namespace Ironex\Schema\Request\Method;
 
+use Ironex\Schema\Request\Parameter\ParameterInterface;
+
 interface MethodInterface
 {
+    /**
+     * @param ParameterInterface $parameter
+     * @return ParameterInterface
+     */
+    public function addParameter(ParameterInterface $parameter): ParameterInterface;
+
     /**
      * @return array
      */

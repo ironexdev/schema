@@ -1,6 +1,6 @@
 <?php
 
-namespace Ironex\Schema\Request\Parameter;
+namespace Ironex\Schema\Response\Parameter;
 
 interface ParameterInterface
 {
@@ -46,8 +46,5 @@ interface ParameterInterface
      */
     public function isValid(): bool;
 
-    /**
-     * @param $input
-     */
-    public function validateInput($input): void;
+    public function validate(): void;
 }

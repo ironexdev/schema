@@ -1,10 +1,10 @@
 <?php
 
-namespace Ironex\Schema\Request\Parameter\ScalarParameter;
+namespace Ironex\Schema\Response\Parameter\ScalarParameter;
 
-use Ironex\Schema\Request\Enum\ParameterTypeEnum;
-use Ironex\Schema\Request\Parameter\ScalarParameter\Rule\MaxLengthRule;
-use Ironex\Schema\Request\Parameter\ScalarParameter\Rule\MinLengthRule;
+use Ironex\Schema\Response\Enum\ParameterTypeEnum;
+use Ironex\Schema\Response\Parameter\ScalarParameter\Rule\MaxLengthRule;
+use Ironex\Schema\Response\Parameter\ScalarParameter\Rule\MinLengthRule;
 use Error;
 
 class StringParameter extends AbstractScalarParameter
@@ -24,7 +24,7 @@ class StringParameter extends AbstractScalarParameter
     /**
      * @var string
      */
-    private $value;
+    protected $value;
 
     /**
      * Parameter constructor.

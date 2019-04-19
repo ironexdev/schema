@@ -2,8 +2,8 @@
 
 namespace Ironex\Schema\Response\Method;
 
-use Ironex\Schema\Request\Enum\ErrorEnum;
-use Ironex\Schema\Request\Parameter\ParameterInterface;
+use Ironex\Schema\Response\Enum\ErrorEnum;
+use Ironex\Schema\Response\Parameter\ParameterInterface;
 
 abstract class AbstractMethod implements MethodInterface
 {
@@ -86,31 +86,18 @@ abstract class AbstractMethod implements MethodInterface
         return true;
     }
 
-    /**
-     * @param $input
-     */
-    public function validateInput($input): void
+    public function validate(): void
     {
-        foreach ($this->parameters as $parameter)
+        foreach($this->parameters as $parameter)
         {
-            $parameterName = $parameter->getName();
-
-            if (!property_exists($input, $parameterName))
+            if($parameter->isRequired())
             {
-                if ($parameter->isRequired())
-                {
-                    $parameter->addError(ErrorEnum::REQUIRED);
-                    continue;
-                }
-                else
-                {
-                    continue;
-                }
+                $parameter->addError(ErrorEnum::REQUIRED);
+                continue;
             }
 
-            $value = $input->$parameterName;
-
-            $parameter->validateInput($value);
+            /** @var MethodInterface $parameter */
+            $parameter->validate();
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Ironex\Schema\Response\Method;
 
-use Ironex\Schema\Request\Parameter\ParameterInterface;
+use Ironex\Schema\Response\Parameter\ParameterInterface;
 
 interface MethodInterface
 {
@@ -11,6 +11,7 @@ interface MethodInterface
      * @return ParameterInterface
      */
     public function addParameter(ParameterInterface $parameter): ParameterInterface;
+
     /**
      * @return array
      */
@@ -27,7 +28,9 @@ interface MethodInterface
     public function isValid(): bool;
 
     /**
-     * @param object $input
+     * @return array
      */
-    public function validateInput(object $input): void;
+    public function toArray(): array;
+
+    public function validate(): void;
 }

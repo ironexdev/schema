@@ -1,6 +1,6 @@
 <?php
 
-namespace Ironex\Schema\Request\Parameter\ScalarParameter;
+namespace Ironex\Schema\Response\Parameter\ScalarParameter;
 
 interface ScalarParameterInterface
 {

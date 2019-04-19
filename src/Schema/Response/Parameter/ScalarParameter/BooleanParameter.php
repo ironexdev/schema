@@ -1,8 +1,8 @@
 <?php
 
-namespace Ironex\Schema\Request\Parameter\ScalarParameter;
+namespace Ironex\Schema\Response\Parameter\ScalarParameter;
 
-use Ironex\Schema\Request\Enum\ParameterTypeEnum;
+use Ironex\Schema\Response\Enum\ParameterTypeEnum;
 use Error;
 
 class BooleanParameter extends AbstractScalarParameter
@@ -12,7 +12,7 @@ class BooleanParameter extends AbstractScalarParameter
     /**
      * @var bool
      */
-    private $value;
+    protected $value;
 
     /**
      * @return bool

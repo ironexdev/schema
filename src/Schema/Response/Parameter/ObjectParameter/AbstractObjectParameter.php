@@ -1,12 +1,12 @@
 <?php
 
-namespace Ironex\Schema\Request\Parameter\ObjectParameter;
+namespace Ironex\Schema\Response\Parameter\ObjectParameter;
 
-use Ironex\Schema\Request\Enum\ErrorEnum;
-use Ironex\Schema\Request\Enum\ParameterTypeEnum;
-use Ironex\Schema\Request\Parameter\ArrayParameter\ArrayParameterInterface;
-use Ironex\Schema\Request\Parameter\ParameterInterface;
-use Ironex\Schema\Request\Parameter\ScalarParameter\ScalarParameterInterface;
+use Ironex\Schema\Response\Enum\ErrorEnum;
+use Ironex\Schema\Response\Enum\ParameterTypeEnum;
+use Ironex\Schema\Response\Parameter\ArrayParameter\ArrayParameterInterface;
+use Ironex\Schema\Response\Parameter\ParameterInterface;
+use Ironex\Schema\Response\Parameter\ScalarParameter\ScalarParameterInterface;
 
 abstract class AbstractObjectParameter implements ObjectParameterInterface, ParameterInterface
 {
@@ -40,6 +40,15 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
     }
 
     /**
+     * @param string $error
+     * @param bool $constraint
+     */
+    public function addError(string $error, $constraint = true): void
+    {
+        $this->errors[$error] = $constraint;
+    }
+
+    /**
      * @return array
      */
     public function getDefinition(): array
@@ -55,15 +64,6 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
         }
 
         return $definition;
-    }
-
-    /**
-     * @param string $error
-     * @param bool $constraint
-     */
-    public function addError(string $error, $constraint = true): void
-    {
-        $this->errors[$error] = $constraint;
     }
 
     /**
@@ -182,37 +182,18 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
         }
     }
 
-    /**
-     * @param $input
-     */
-    public function validateInput($input): void
+    public function validate(): void
     {
-        if(gettype($input) !== ParameterTypeEnum::OBJECT)
-        {
-            $this->errors[ErrorEnum::TYPE] = ParameterTypeEnum::OBJECT;
-            return;
-        }
-
         foreach($this->parameters as $parameter)
         {
-            $parameterName = $parameter->getName();
-
-            if(!property_exists($input, $parameterName))
+            if($parameter->isRequired())
             {
-                if($parameter->isRequired())
-                {
-                    $parameter->addError(ErrorEnum::REQUIRED);
-                    continue;
-                }
-                else
-                {
-                    continue;
-                }
+                $parameter->addError(ErrorEnum::REQUIRED);
+                continue;
             }
 
-            $value = $input->$parameterName;
-
-            $parameter->validateInput($value);
+            /** @var ParameterInterface $parameter */
+            $parameter->validate();
         }
     }
 }

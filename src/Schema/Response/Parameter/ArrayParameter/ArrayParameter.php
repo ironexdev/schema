@@ -1,11 +1,11 @@
 <?php
 
-namespace Ironex\Schema\Request\Parameter\ArrayParameter;
+namespace Ironex\Schema\Response\Parameter\ArrayParameter;
 
-use Ironex\Schema\Request\Enum\ErrorEnum;
-use Ironex\Schema\Request\Enum\ParameterTypeEnum;
-use Ironex\Schema\Request\Parameter\ParameterInterface;
-use Ironex\Schema\Request\Parameter\ScalarParameter\ScalarParameterInterface;
+use Ironex\Schema\Response\Enum\ErrorEnum;
+use Ironex\Schema\Response\Enum\ParameterTypeEnum;
+use Ironex\Schema\Response\Parameter\ParameterInterface;
+use Ironex\Schema\Response\Parameter\ScalarParameter\ScalarParameterInterface;
 
 class ArrayParameter implements ArrayParameterInterface, ParameterInterface
 {
@@ -135,11 +135,11 @@ class ArrayParameter implements ArrayParameterInterface, ParameterInterface
     }
 
     /**
-     * @param array $input
+     * @param array $values
      */
-    public function setValues(array $input): void
+    public function setValues(array $values): void
     {
-        foreach($input as $value)
+        foreach($values as $value)
         {
             $parameter = clone $this->parameter;
 
@@ -160,40 +160,30 @@ class ArrayParameter implements ArrayParameterInterface, ParameterInterface
         }
     }
 
-    /**
-     * @param $input
-     */
-    public function validateInput($input): void
+    public function validate(): void
     {
-        if(gettype($input) !== $this->type)
-        {
-            $this->errors[ErrorEnum::TYPE] = $this->type;
-            return;
-        }
+        $parameterCount = count($this->parameters);
 
-        $inputCount = count($input);
-
-        if($this->maxItemCount !== null && $inputCount > $this->maxItemCount)
+        if($this->maxItemCount !== null && $parameterCount > $this->maxItemCount)
         {
             $this->errors[ErrorEnum::MAX_ITEM_COUNT] = $this->maxItemCount;
             return;
         }
 
-        if($this->minItemCount !== null && $inputCount < $this->minItemCount)
+        if($this->minItemCount !== null && $parameterCount < $this->minItemCount)
         {
             $this->errors[ErrorEnum::MIN_ITEM_COUNT] = $this->minItemCount;
             return;
         }
 
-        for($i = 0; $i < $inputCount; $i++)
+        for($i = 0; $i < $parameterCount; $i++)
         {
-            $value = $input[$i];
-            $this->parameter->resetErrors();
-            $this->parameter->validateInput($value);
+            $parameter = $this->parameters[$i];
+            $parameter->validate();
 
-            if(!$this->parameter->isValid())
+            if(!$parameter->isValid())
             {
-                $this->errors[$i] = $this->parameter->getErrors();
+                $this->errors[$i] = $parameter->getErrors();
                 continue;
             }
         }

@@ -1,11 +1,10 @@
 <?php
 
-namespace Ironex\Schema\Request\Parameter\ScalarParameter;
+namespace Ironex\Schema\Response\Parameter\ScalarParameter;
 
-use Ironex\Schema\Request\Enum\ErrorEnum;
-use Ironex\Schema\Request\Enum\ParameterTypeEnum;
-use Ironex\Schema\Request\Parameter\ParameterInterface;
-use Ironex\Schema\Request\Parameter\ScalarParameter\Rule\RuleInterface;
+use Ironex\Schema\Response\Enum\ErrorEnum;
+use Ironex\Schema\Response\Parameter\ParameterInterface;
+use Ironex\Schema\Response\Parameter\ScalarParameter\Rule\RuleInterface;
 
 abstract class AbstractScalarParameter implements ScalarParameterInterface, ParameterInterface
 {
@@ -38,6 +37,11 @@ abstract class AbstractScalarParameter implements ScalarParameterInterface, Para
      * @var string
      */
     protected $type;
+
+    /**
+     * @var mixed
+     */
+    protected $value;
 
     /**
      * AbstractScalarParameter constructor.
@@ -130,20 +134,11 @@ abstract class AbstractScalarParameter implements ScalarParameterInterface, Para
         return $this->errors ? true : false;
     }
 
-    /**
-     * @param $input
-     */
-    public function validateInput($input): void
+    public function validate(): void
     {
-        if(gettype($input) !== ($this->type !== ParameterTypeEnum::FLOAT ? $this->type : "double"))
-        {
-            $this->errors[ErrorEnum::TYPE] = $this->type;
-            return;
-        }
-
         foreach ($this->rules as $rule)
         {
-            if (!$rule->test($input))
+            if (!$rule->test($this->value))
             {
                 $this->errors[$rule->getName()] = $rule->getConstraint();
             }

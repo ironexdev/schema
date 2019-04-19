@@ -182,6 +182,28 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
         }
     }
 
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $data = [];
+
+        foreach($this->parameters as $parameter)
+        {
+            if($parameter instanceof ScalarParameterInterface)
+            {
+                $data[$parameter->getName()] = $parameter->getValue();
+            }
+            else
+            {
+                $data[$parameter->getName()] = $parameter->toArray();
+            }
+        }
+
+        return $data;
+    }
+
     public function validate(): void
     {
         foreach($this->parameters as $parameter)

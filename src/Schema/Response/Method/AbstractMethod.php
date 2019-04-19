@@ -4,6 +4,7 @@ namespace Ironex\Schema\Response\Method;
 
 use Ironex\Schema\Response\Enum\ErrorEnum;
 use Ironex\Schema\Response\Parameter\ParameterInterface;
+use Ironex\Schema\Response\Parameter\ScalarParameter\ScalarParameterInterface;
 
 abstract class AbstractMethod implements MethodInterface
 {
@@ -84,6 +85,28 @@ abstract class AbstractMethod implements MethodInterface
         }
 
         return true;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $data = [];
+
+        foreach($this->parameters as $parameter)
+        {
+            if($parameter instanceof ScalarParameterInterface)
+            {
+                $data[$parameter->getName()] = $parameter->getValue();
+            }
+            else
+            {
+                $data[$parameter->getName()] = $parameter->toArray();
+            }
+        }
+
+        return $data;
     }
 
     public function validate(): void

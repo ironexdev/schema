@@ -12,7 +12,7 @@ try
 catch (Throwable $e)
 {
     http_response_code(500);
-    header("Content-Type: application/json");
+    header("Content-Type: application/json; charset=utf-8");
     echo json_encode([
                          "message" => $e->getMessage() . " on line " . $e->getLine() . " in file " . $e->getFile(),
                          "debug_backtrace" => $e->getTrace()
@@ -29,8 +29,16 @@ function init()
     $containerBuilder->useAnnotations(true);
     $container = $containerBuilder->build();
 
+    $requestToCrudMethod = [
+        "POST" => "create",
+        "DELETE" => "delete",
+        "OPTIONS" => "options",
+        "GET" => "read",
+        "PUT" => "update",
+    ];
+
     $container->call([
                          TestResource::class,
-                         "read"
+                         $requestToCrudMethod[$_SERVER["REQUEST_METHOD"]]
                      ]);
 }

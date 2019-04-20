@@ -1,8 +1,9 @@
 # Schema
-- self-descriptive and self-validating JSON API framework.
+- self-descriptive and self-validating JSON API framework
 
-Example of use can be found in src/Schema/Example.
+## Example
 
+- src/Schema/Example
 - point localhost to index.php
 - send application/json GET request to /test
 - request body (even for GET requests) should look like this:

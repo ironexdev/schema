@@ -1,5 +1,5 @@
 # Schema
-- self-defining and self-validating JSON API framework.
+- self-descriptive and self-validating JSON API framework.
 
 Example of use can be found in src/Schema/Example.
 

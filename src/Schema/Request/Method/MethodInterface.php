@@ -31,4 +31,9 @@ interface MethodInterface
      * @param object $input
      */
     public function setValues(object $input): void;
+
+    /**
+     * @param object $input
+     */
+    public function validateInput(object $input): void;
 }

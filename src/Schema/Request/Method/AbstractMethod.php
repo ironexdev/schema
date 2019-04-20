@@ -111,9 +111,9 @@ abstract class AbstractMethod implements MethodInterface
     }
 
     /**
-     * @param $input
+     * @param object $input
      */
-    public function validateInput($input): void
+    public function validateInput(object $input): void
     {
         foreach($this->parameters as $parameter)
         {

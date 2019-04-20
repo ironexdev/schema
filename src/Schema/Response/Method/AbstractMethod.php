@@ -113,13 +113,13 @@ abstract class AbstractMethod implements MethodInterface
     {
         foreach($this->parameters as $parameter)
         {
-            if($parameter->isRequired())
+            if($parameter->isRequired() && $parameter->getValue() === null)
             {
                 $parameter->addError(ErrorEnum::REQUIRED);
                 continue;
             }
 
-            /** @var MethodInterface $parameter */
+            /** @var ParameterInterface $parameter */
             $parameter->validate();
         }
     }

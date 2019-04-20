@@ -208,7 +208,7 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
     {
         foreach($this->parameters as $parameter)
         {
-            if($parameter->isRequired())
+            if($parameter->isRequired() && $parameter->getValue() === null)
             {
                 $parameter->addError(ErrorEnum::REQUIRED);
                 continue;

@@ -8,6 +8,10 @@ use Ironex\Schema\Example\Api\Test\Read\ReadRS;
 
 class TestResource extends AbstractResource
 {
+    protected $requestMethods = [
+        ReadRQ::class
+    ];
+
     /**
      * @param ReadRQ $readRQ
      * @param ReadRS $readRS

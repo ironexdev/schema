@@ -2,15 +2,15 @@
 
 namespace Ironex\Schema\Example\Api;
 
-use Ironex\Schema\Example\Api\Test\Read\ReadRQ;
-use Ironex\Schema\Example\Api\Test\Read\ReadRS;
+use Ironex\Schema\AbstractResource as IronexAbstractResource;
+use Ironex\Schema\Request\Method\MethodInterface as MethodInterfaceRQ;
+use Ironex\Schema\Response\Method\MethodInterface as MethodInterfaceRS;
 
-abstract class AbstractResource
+abstract class AbstractResource extends IronexAbstractResource
 {
     public function options(): void
     {
-        $allowedMethods = [];
-        $crudMethods = ["create", "delete", "options", "read", "update"];
+        $allowedRequestMethods = [];
         $crudToRequestMethod = [
             "create" => "POST",
             "delete" => "DELETE",
@@ -18,19 +18,17 @@ abstract class AbstractResource
             "read" => "GET",
             "update" => "PUT"
         ];
-        $methods = get_class_methods($this);
 
-        foreach ($methods as $method)
+        $crudRequestMethods = $this->getRequestMethodNames();
+
+        foreach ($crudRequestMethods as $crudRequestMethod)
         {
-            if ($method !== "options" && in_array($method, $crudMethods))
-            {
-                $allowedMethods[] = $crudToRequestMethod[$method];
-            }
+            $allowedRequestMethods[] = $crudToRequestMethod[$crudRequestMethod];
         }
 
         http_response_code(200);
         header("Access-Control-Allow-Headers: Content-Type");
-        header("Access-Control-Allow-Methods: " . implode(", ", $allowedMethods));
+        header("Access-Control-Allow-Methods: " . implode(", ", $allowedRequestMethods));
         header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/json; charset=utf-8");
         echo json_encode([
@@ -42,9 +40,9 @@ abstract class AbstractResource
     }
 
     /**
-     * @param ReadRQ $readRQ
+     * @param MethodInterfaceRQ $readRQ
      */
-    protected function initRQ(ReadRQ $readRQ): void
+    protected function initRQ(MethodInterfaceRQ $readRQ): void
     {
         $requestData = json_decode(file_get_contents("php://input"));
 
@@ -62,9 +60,9 @@ abstract class AbstractResource
     }
 
     /**
-     * @param ReadRS $readRS
+     * @param MethodInterfaceRS $readRS
      */
-    protected function sendRS(ReadRS $readRS): void
+    protected function sendRS(MethodInterfaceRS $readRS): void
     {
         $readRS->validate();
         if (!$readRS->isValid())

@@ -1,5 +1,6 @@
 <?php
 
+use Ironex\Schema\Example\Api\Schema;
 use Ironex\Schema\Example\Api\Test\TestResource;
 use DI\ContainerBuilder;
 
@@ -13,10 +14,20 @@ catch (Throwable $e)
 {
     http_response_code(500);
     header("Content-Type: application/json; charset=utf-8");
-    echo json_encode([
-                         "message" => $e->getMessage() . " on line " . $e->getLine() . " in file " . $e->getFile(),
-                         "debug_backtrace" => $e->getTrace()
-                     ]);
+
+    if (false) // production environment
+    {
+        echo json_encode([
+                             "message" => "Page Not Found"
+                         ]);
+    }
+    else
+    {
+        echo json_encode([
+                             "message" => $e->getMessage() . " on line " . $e->getLine() . " in file " . $e->getFile(),
+                             "debug_backtrace" => $e->getTrace()
+                         ]);
+    }
 }
 
 /**
@@ -37,8 +48,20 @@ function init()
         "PUT" => "update",
     ];
 
-    $container->call([
-                         TestResource::class,
-                         $requestToCrudMethod[$_SERVER["REQUEST_METHOD"]]
-                     ]);
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+
+    if($_SERVER["REQUEST_URI"] === "/" && $requestMethod === "OPTIONS")
+    {
+        $container->call([
+                             Schema::class,
+                             "options"
+                         ]);
+    }
+    else
+    {
+        $container->call([
+                             TestResource::class,
+                             $requestToCrudMethod[$_SERVER["REQUEST_METHOD"]]
+                         ]);
+    }
 }

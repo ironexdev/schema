@@ -2,11 +2,14 @@
 
 namespace Ironex\Schema;
 
+use DI\Annotation\Inject;
+use DI\Container;
 use DI\ContainerBuilder;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Error;
 use Exception;
+use stdClass;
 
 abstract class AbstractApi
 {
@@ -14,6 +17,12 @@ abstract class AbstractApi
      * @var array
      */
     protected $resources = [];
+
+    /**
+     * @Inject
+     * @var Container
+     */
+    private $container;
 
     /**
      * @return array
@@ -24,17 +33,28 @@ abstract class AbstractApi
 
         foreach($this->getResources() as $resource)
         {
-            $methods = $resource->getRequestMethods();
-
-            $methodDefinitions = [];
-            foreach($methods as $methodName => $method)
-            {
-                $methodDefinitions[$methodName] = $method->getDefinition();
-            }
-
             $resourceClass = get_class($resource);
             $resourceName = strtolower(str_replace("Resource", "", substr($resourceClass, strrpos($resourceClass, "\\") + 1)));
-            $definition[$resourceName] = $methodDefinitions;
+
+            $requestMethods = $resource->getRequestMethods();
+            $responseMethods = $resource->getResponseMethods();
+
+            if(count($requestMethods) !== count($responseMethods))
+            {
+                throw new Error($resourceClass . "  request method count does not match response method count");
+            }
+
+            $methodDefinitions = [];
+            foreach($requestMethods as $requestMethodName => $requestMethod)
+            {
+                $methodDefinitions[$requestMethodName . "RQ"] = $requestMethod->getDefinition();
+                $methodDefinitions[$requestMethodName . "RS"] = $responseMethods[$requestMethodName]->getDefinition();
+            }
+
+            $methodDefinitions["optionsRQ"] = new stdClass();
+            $methodDefinitions["optionsRS"] = new stdClass();
+
+            $definition["/" . $resourceName] = $methodDefinitions;
         }
 
         return $definition;
@@ -45,25 +65,12 @@ abstract class AbstractApi
      */
     private function getResources(): array
     {
-        $containerBuilder = new ContainerBuilder;
-        $containerBuilder->useAutowiring(true);
-        $containerBuilder->useAnnotations(true);
-
-        try
-        {
-            $container = $containerBuilder->build();
-        }
-        catch (Exception $e)
-        {
-            throw new Error($e->getMessage());
-        }
-
         $resourceObjects = [];
         foreach($this->resources as $resource)
         {
             try
             {
-                $resourceObjects[$resource] = $container->get($resource);
+                $resourceObjects[$resource] = $this->container->get($resource);
             }
             catch (DependencyException $e)
             {

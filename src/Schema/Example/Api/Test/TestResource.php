@@ -12,6 +12,10 @@ class TestResource extends AbstractResource
         ReadRQ::class
     ];
 
+    protected $responseMethods = [
+        ReadRS::class
+    ];
+
     /**
      * @param ReadRQ $readRQ
      * @param ReadRS $readRS

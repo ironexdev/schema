@@ -15,4 +15,9 @@ interface ResourceInterface
      * @return array
      */
     public function getRequestMethodNames(): array;
+
+    /**
+     * @return MethodInterface[]
+     */
+    public function getResponseMethods(): array;
 }

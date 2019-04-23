@@ -8,7 +8,7 @@ use DI\NotFoundException;
 use Error;
 use Exception;
 
-abstract class AbstractSchema
+abstract class AbstractApi
 {
     /**
      * @var array

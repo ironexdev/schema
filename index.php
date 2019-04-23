@@ -1,6 +1,6 @@
 <?php
 
-use Ironex\Schema\Example\Api\Schema;
+use Ironex\Schema\Example\Api\Api;
 use Ironex\Schema\Example\Api\Test\TestResource;
 use DI\ContainerBuilder;
 
@@ -50,10 +50,10 @@ function init()
 
     $requestMethod = $_SERVER["REQUEST_METHOD"];
 
-    if($_SERVER["REQUEST_URI"] === "/" && $requestMethod === "OPTIONS")
+    if($_SERVER["REQUEST_URI"] === "/schema" && $requestMethod === "OPTIONS")
     {
         $container->call([
-                             Schema::class,
+                             Api::class,
                              "options"
                          ]);
     }
@@ -61,7 +61,7 @@ function init()
     {
         $container->call([
                              TestResource::class,
-                             $requestToCrudMethod[$_SERVER["REQUEST_METHOD"]]
+                             $requestToCrudMethod[$requestMethod]
                          ]);
     }
 }

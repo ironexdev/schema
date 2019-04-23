@@ -2,10 +2,10 @@
 
 namespace Ironex\Schema\Example\Api;
 
-use Ironex\Schema\AbstractSchema;
+use Ironex\Schema\AbstractApi;
 use Ironex\Schema\Example\Api\Test\TestResource;
 
-class Schema extends AbstractSchema
+class Api extends AbstractApi
 {
     /**
      * @var array

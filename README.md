@@ -1,4 +1,5 @@
 # Schema
+
 - self-descriptive and self-validating JSON API framework
 
 ## Example

@@ -6,7 +6,7 @@ use Ironex\Schema\AbstractResource as IronexAbstractResource;
 use Ironex\Schema\Request\Method\MethodInterface as MethodInterfaceRQ;
 use Ironex\Schema\Response\Method\MethodInterface as MethodInterfaceRS;
 
-abstract class AbstractResource extends IronexAbstractResource
+class AbstractResource extends IronexAbstractResource
 {
     public function options(): void
     {

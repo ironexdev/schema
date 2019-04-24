@@ -6,6 +6,7 @@ use Ironex\Schema\Response\Parameter\ParameterInterface;
 
 interface ObjectParameterInterface
 {
+
     /**
      * @param ParameterInterface $parameter
      * @return ParameterInterface
@@ -13,12 +14,12 @@ interface ObjectParameterInterface
     public function addParameter(ParameterInterface $parameter): ParameterInterface;
 
     /**
+     * @return object
+     */
+    public function serialize(): object;
+
+    /**
      * @param object $input
      */
     public function setValues(object $input): void;
-
-    /**
-     * @return array
-     */
-    public function toArray(): array;
 }

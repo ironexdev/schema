@@ -11,14 +11,14 @@ interface ParameterInterface
     public function addError(string $error, $constraint = true): void;
 
     /**
-     * @return array
+     * @return object
      */
-    public function getDefinition(): array;
+    public function getDefinition(): object;
 
     /**
-     * @return array
+     * @return object
      */
-    public function getErrors(): array;
+    public function getErrors(): object;
 
     /**
      * @return void

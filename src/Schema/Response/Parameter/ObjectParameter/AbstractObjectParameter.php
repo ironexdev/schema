@@ -11,9 +11,9 @@ use Ironex\Schema\Response\Parameter\ScalarParameter\ScalarParameterInterface;
 abstract class AbstractObjectParameter implements ObjectParameterInterface, ParameterInterface
 {
     /**
-     * @var array
+     * @var object
      */
-    protected $errors = [];
+    protected $errors;
 
     /**
      * @var string
@@ -36,7 +36,30 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
      */
     public function __construct(string $name)
     {
+        $this->errors = (object) [];
         $this->name = $name;
+    }
+
+    /**
+     * @return object
+     */
+    public function getDefinition(): object
+    {
+        $definition = (object) [];
+
+        $definition->{ErrorEnum::REQUIRED} = $this->isRequired();
+        $definition->{ErrorEnum::TYPE} = ParameterTypeEnum::OBJECT;
+
+        if($this->parameters)
+        {
+            $definition->parameters = (object) [];
+            foreach($this->parameters as $parameter)
+            {
+                $definition->parameters->{$parameter->getName()} = $parameter->getDefinition();
+            }
+        }
+
+        return $definition;
     }
 
     /**
@@ -45,40 +68,21 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
      */
     public function addError(string $error, $constraint = true): void
     {
-        $this->errors[$error] = $constraint;
+        $this->errors->{$error} = $constraint;
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function getDefinition(): array
+    public function getErrors(): object
     {
-        $definition = [];
+        $errorsObject = (object) [];
 
-        $definition[ErrorEnum::REQUIRED] = $this->isRequired();
-        $definition[ErrorEnum::TYPE] = ParameterTypeEnum::OBJECT;
-
-        foreach($this->parameters as $parameter)
+        if(get_object_vars($this->errors))
         {
-            $definition["parameters"][$parameter->getName()] = $parameter->getDefinition();
+            $errorsObject->errors = $this->errors;
+            return $errorsObject;
         }
-
-        return $definition;
-    }
-
-    /**
-     * @return array
-     */
-    public function getErrors(): array
-    {
-        if($this->errors)
-        {
-            return [
-                "errors" => $this->errors
-            ];
-        }
-
-        $errors = [];
 
         foreach($this->parameters as $parameter)
         {
@@ -86,16 +90,17 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
 
             if($parameterErrors)
             {
-                $errors["parameters"][$parameter->getName()] = $parameterErrors;
+                $this->errors->parameters->{$parameter->getName()} = $parameterErrors;
             }
         }
 
-        return $errors;
+        $errorsObject->errors = $this->errors;
+        return $errorsObject;
     }
 
     public function resetErrors(): void
     {
-        $this->errors = [];
+        $this->errors = (object) [];
     }
 
     /**
@@ -113,7 +118,6 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
     public function addParameter(ParameterInterface $parameter): ParameterInterface
     {
         $this->parameters[] = $parameter;
-
         return $parameter;
     }
 
@@ -140,16 +144,14 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
      */
     public function isValid(): bool
     {
-        $errors = $this->errors;
-
-        if($errors)
+        if(get_object_vars($this->errors))
         {
             return false;
         }
 
         foreach($this->parameters as $parameter)
         {
-            if($parameter->getErrors())
+            if(get_object_vars($parameter->getErrors()))
             {
                 return false;
             }
@@ -183,21 +185,21 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function toArray(): array
+    public function serialize(): object
     {
-        $data = [];
+        $data = (object) [];
 
         foreach($this->parameters as $parameter)
         {
             if($parameter instanceof ScalarParameterInterface)
             {
-                $data[$parameter->getName()] = $parameter->getValue();
+                $data->{$parameter->getName()} = $parameter->getValue();
             }
             else
             {
-                $data[$parameter->getName()] = $parameter->toArray();
+                $data->{$parameter->getName()} = $parameter->serialize();
             }
         }
 

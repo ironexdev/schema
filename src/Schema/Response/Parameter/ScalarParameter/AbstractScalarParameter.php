@@ -9,9 +9,9 @@ use Ironex\Schema\Response\Parameter\ScalarParameter\Rule\RuleInterface;
 abstract class AbstractScalarParameter implements ScalarParameterInterface, ParameterInterface
 {
     /**
-     * @var array
+     * @var object
      */
-    protected $errors = [];
+    protected $errors;
 
     /**
      * @var string
@@ -49,23 +49,24 @@ abstract class AbstractScalarParameter implements ScalarParameterInterface, Para
      */
     public function __construct(string $name)
     {
+        $this->errors = (object) [];
         $this->name = $name;
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function getDefinition(): array
+    public function getDefinition(): object
     {
-        $definition = [];
+        $definition = (object) [];
 
-        $definition[ErrorEnum::REQUIRED] = $this->isRequired();
-        $definition[ErrorEnum::TYPE] = $this->type;
+        $definition->{ErrorEnum::REQUIRED} = $this->isRequired();
+        $definition->{ErrorEnum::TYPE} = $this->type;
 
-        $definition["rules"] = [];
+        $definition->rules = (object) [];
         foreach($this->rules as $rule)
         {
-            $definition["rules"][$rule->getName()] = $rule->getConstraint();
+            $definition->rules->{$rule->getName()} = $rule->getConstraint();
         }
 
         return $definition;
@@ -77,27 +78,27 @@ abstract class AbstractScalarParameter implements ScalarParameterInterface, Para
      */
     public function addError(string $error, $constraint = true): void
     {
-        $this->errors[$error] = $constraint;
+        $this->errors->{$error} = $constraint;
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function getErrors(): array
+    public function getErrors(): object
     {
-        if(!$this->errors)
+        if(!get_object_vars($this->errors))
         {
-            return [];
+            return $this->errors;
         }
 
-        return [
-            "errors" => $this->errors
-        ];
+        $errorsObject = (object) [];
+        $errorsObject->errors = $this->errors;
+        return $errorsObject;
     }
 
     public function resetErrors(): void
     {
-        $this->errors = [];
+        $this->errors = (object) [];
     }
 
     /**
@@ -131,7 +132,7 @@ abstract class AbstractScalarParameter implements ScalarParameterInterface, Para
      */
     public function isValid(): bool
     {
-        return $this->errors ? true : false;
+        return get_object_vars($this->errors) ? true : false;
     }
 
     public function validate(): void
@@ -140,7 +141,7 @@ abstract class AbstractScalarParameter implements ScalarParameterInterface, Para
         {
             if (!$rule->test($this->value))
             {
-                $this->errors[$rule->getName()] = $rule->getConstraint();
+                $this->errors->{$rule->getName()} = $rule->getConstraint();
             }
         }
     }

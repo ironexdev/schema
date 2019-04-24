@@ -19,6 +19,8 @@ class ReadRS extends AbstractMethod
      */
     public function __construct(IntegerParameterFactory $integerParameterFactory)
     {
+        parent::__construct();
+
         $this->idParameter = $this->addParameter($integerParameterFactory->create("id")
                                                                          ->setRequired(true));
     }

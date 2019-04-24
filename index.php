@@ -5,6 +5,22 @@ use Ironex\Schema\Example\Api\Test\TestResource;
 use DI\ContainerBuilder;
 
 require __DIR__ . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
+error_reporting(E_ALL);
+
+register_shutdown_function("fatal_handler");
+
+function fatal_handler()
+{
+    $error = error_get_last();
+
+    if($error)
+    {
+        handleError($error);
+    }
+}
 
 try
 {
@@ -12,22 +28,12 @@ try
 }
 catch (Throwable $e)
 {
-    http_response_code(500);
-    header("Content-Type: application/json; charset=utf-8");
-
-    if (false) // production environment
-    {
-        echo json_encode([
-                             "message" => "Page Not Found"
-                         ]);
-    }
-    else
-    {
-        echo json_encode([
-                             "message" => $e->getMessage() . " on line " . $e->getLine() . " in file " . $e->getFile(),
-                             "debug_backtrace" => $e->getTrace()
-                         ]);
-    }
+    handleError([
+                    "message" => $e->getMessage(),
+                    "file" => $e->getFile(),
+                    "line" => $e->getLine(),
+                    "trace" => $e->getTrace()
+                ]);
 }
 
 /**
@@ -50,7 +56,7 @@ function init()
 
     $requestMethod = $_SERVER["REQUEST_METHOD"];
 
-    if($_SERVER["REQUEST_URI"] === "/schema" && $requestMethod === "OPTIONS")
+    if ($_SERVER["REQUEST_URI"] === "/schema" && $requestMethod === "OPTIONS")
     {
         $container->call([
                              Api::class,
@@ -64,4 +70,23 @@ function init()
                              $requestToCrudMethod[$requestMethod]
                          ]);
     }
+}
+
+function handleError(array $error)
+{
+    http_response_code(500);
+    header("Content-Type: application/json; charset=utf-8");
+
+    $responseObject = new stdClass();
+    if (false) // production environment
+    {
+        $responseObject->message = "Page Not Found";
+    }
+    else
+    {
+        $responseObject->message = $error["message"] . " on line " . $error["line"] . " in file " . $error["file"];
+        $responseObject->debug_backtrace = isset($error["trace"]) ? $error["trace"] : null;
+    }
+
+    echo json_encode($responseObject);
 }

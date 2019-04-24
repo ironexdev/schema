@@ -19,6 +19,8 @@ class ReadRQ extends AbstractMethod
      */
     public function __construct(StringParameterFactory $stringParameterFactory)
     {
+        parent::__construct();
+
         $this->titleParameter = $this->addParameter($stringParameterFactory->create("title")
                                                                                  ->setRequired(true));
     }

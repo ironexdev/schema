@@ -4,12 +4,10 @@ namespace Ironex\Schema;
 
 use DI\Annotation\Inject;
 use DI\Container;
-use DI\ContainerBuilder;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Error;
-use Exception;
-use stdClass;
+use Ironex\Schema\Enum\RequestMethodEnum;
 
 abstract class AbstractApi
 {
@@ -25,36 +23,35 @@ abstract class AbstractApi
     private $container;
 
     /**
-     * @return array
+     * @return object
      */
-    public function getDefinition(): array
+    public function getDefinition(): object
     {
-        $definition = [];
+        $definition = (object) [];
 
         foreach($this->getResources() as $resource)
         {
             $resourceClass = get_class($resource);
-            $resourceName = strtolower(str_replace("Resource", "", substr($resourceClass, strrpos($resourceClass, "\\") + 1)));
+            $resourceName = "/" . strtolower(str_replace("Resource", "", substr($resourceClass, strrpos($resourceClass, "\\") + 1)));
 
             $requestMethods = $resource->getRequestMethods();
             $responseMethods = $resource->getResponseMethods();
 
             if(count($requestMethods) !== count($responseMethods))
             {
-                throw new Error($resourceClass . "  request method count does not match response method count");
+                throw new Error($resourceClass . " request method count does not match response method count");
             }
 
-            $methodDefinitions = [];
+            $methodDefinitions = (object) [];
             foreach($requestMethods as $requestMethodName => $requestMethod)
             {
-                $methodDefinitions[$requestMethodName . "RQ"] = $requestMethod->getDefinition();
-                $methodDefinitions[$requestMethodName . "RS"] = $responseMethods[$requestMethodName]->getDefinition();
+                $methodDefinitions->{RequestMethodEnum::CRUD_TO_REQUEST_METHOD[$requestMethodName]} = (object) [
+                    "request" => $requestMethod->getDefinition(),
+                    "response" => $responseMethods[$requestMethodName]->getDefinition()
+                ];
             }
 
-            $methodDefinitions["optionsRQ"] = new stdClass();
-            $methodDefinitions["optionsRS"] = new stdClass();
-
-            $definition["/" . $resourceName] = $methodDefinitions;
+            $definition->$resourceName = $methodDefinitions;
         }
 
         return $definition;

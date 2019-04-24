@@ -9,14 +9,19 @@ use Ironex\Schema\Response\Parameter\ScalarParameter\ScalarParameterInterface;
 abstract class AbstractMethod implements MethodInterface
 {
     /**
-     * @var array
+     * @var object
      */
-    protected $errors = [];
+    protected $errors;
 
     /**
      * @var ParameterInterface[]
      */
     protected $parameters = [];
+
+    public function __construct()
+    {
+        $this->errors = (object) [];
+    }
 
     /**
      * @param ParameterInterface $parameter
@@ -30,38 +35,36 @@ abstract class AbstractMethod implements MethodInterface
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function getDefinition(): array
+    public function getDefinition(): object
     {
-        $definition = [];
+        $definition = (object) [];
 
-        foreach ($this->parameters as $parameter)
+        foreach($this->parameters as $parameter)
         {
-            $definition[$parameter->getName()] = $parameter->getDefinition();
+            $definition->{$parameter->getName()} = $parameter->getDefinition();
         }
 
         return $definition;
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function getErrors(): array
+    public function getErrors(): object
     {
-        $errors = $this->errors;
-
-        foreach ($this->parameters as $parameter)
+        foreach($this->parameters as $parameter)
         {
             $parameterErrors = $parameter->getErrors();
 
-            if ($parameterErrors)
+            if($parameterErrors)
             {
-                $errors[$parameter->getName()] = $parameterErrors;
+                $this->errors->{$parameter->getName()} = $parameterErrors;
             }
         }
 
-        return $errors;
+        return clone $this->errors;
     }
 
     /**
@@ -69,16 +72,14 @@ abstract class AbstractMethod implements MethodInterface
      */
     public function isValid(): bool
     {
-        $errors = $this->errors;
-
-        if ($errors)
+        if (get_object_vars($this->errors))
         {
             return false;
         }
 
         foreach ($this->parameters as $parameter)
         {
-            if ($parameter->getErrors())
+            if (get_object_vars($parameter->getErrors()))
             {
                 return false;
             }
@@ -88,21 +89,21 @@ abstract class AbstractMethod implements MethodInterface
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function toArray(): array
+    public function serialize(): object
     {
-        $data = [];
+        $data = (object) [];
 
         foreach($this->parameters as $parameter)
         {
             if($parameter instanceof ScalarParameterInterface)
             {
-                $data[$parameter->getName()] = $parameter->getValue();
+                $data->{$parameter->getName()} = $parameter->getValue();
             }
             else
             {
-                $data[$parameter->getName()] = $parameter->toArray();
+                $data->{$parameter->getName()} = $parameter->serialize();
             }
         }
 

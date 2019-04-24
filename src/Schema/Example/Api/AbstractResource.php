@@ -2,12 +2,21 @@
 
 namespace Ironex\Schema\Example\Api;
 
+use DI\Annotation\Inject;
+use Error;
 use Ironex\Schema\AbstractResource as IronexAbstractResource;
+use Ironex\Schema\Example\Response;
 use Ironex\Schema\Request\Method\MethodInterface as MethodInterfaceRQ;
 use Ironex\Schema\Response\Method\MethodInterface as MethodInterfaceRS;
 
 class AbstractResource extends IronexAbstractResource
 {
+    /**
+     * @Inject
+     * @var Response
+     */
+    protected $response;
+
     public function options(): void
     {
         $allowedRequestMethods = [];
@@ -26,69 +35,52 @@ class AbstractResource extends IronexAbstractResource
             $allowedRequestMethods[] = $crudToRequestMethod[$crudRequestMethod];
         }
 
-        http_response_code(200);
-        header("Access-Control-Allow-Headers: Content-Type");
-        header("Access-Control-Allow-Methods: " . implode(", ", $allowedRequestMethods));
-        header("Access-Control-Allow-Origin: *");
-        header("Content-Type: application/json; charset=utf-8");
-        echo json_encode([
-                             "data" => [],
-                             "errors" => [],
-                             "status" => true,
-                         ]);
+        $this->response->send(200, ["Access-Control-Allow-Methods" => implode(", ", $allowedRequestMethods)]);
         exit;
     }
 
     /**
-     * @param MethodInterfaceRQ $readRQ
+     * @param MethodInterfaceRQ $methodRQ
      */
-    protected function initRQ(MethodInterfaceRQ $readRQ): void
+    protected function initRQ(MethodInterfaceRQ $methodRQ): void
     {
         $requestData = json_decode(file_get_contents("php://input"));
 
-        $readRQ->validateInput($requestData);
-        if (!$readRQ->isValid())
+        $methodRQ->validateInput($requestData);
+
+        if (!$methodRQ->isValid())
         {
-            $this->send([
-                            "data" => [],
-                            "errors" => $readRQ->getErrors(),
-                            "status" => false,
-                        ], 200);
+           $this->response->setErrors($methodRQ->getErrors());
+           $this->response->setStatus(false);
+           $this->response->send();
         }
 
-        $readRQ->setValues($requestData);
+        $methodRQ->setValues($requestData);
     }
 
     /**
-     * @param MethodInterfaceRS $readRS
+     * @param MethodInterfaceRS $methodRS
      */
-    protected function sendRS(MethodInterfaceRS $readRS): void
+    protected function sendRS(MethodInterfaceRS $methodRS): void
     {
-        $readRS->validate();
-        if (!$readRS->isValid())
+        $methodRS->validate();
+
+        if (!$methodRS->isValid())
         {
-            $this->send([
-                            "message" => $readRS->getErrors()
-                        ], 500);
+            if(true) // development environment
+            {
+                $this->response->setErrors($methodRS->getErrors());
+                $this->response->setStatus(false);
+                $this->response->send(500);
+            }
+            else
+            {
+                // log errors
+                throw new Error("methodRS contains errors - check log for more information");
+            }
         }
 
-        $this->send([
-                        "data" => $readRS->toArray(),
-                        "errors" => [],
-                        "status" => true
-                    ], 200);
-    }
-
-    /**
-     * @param array $response
-     * @param int $code
-     */
-    protected function send(array $response, int $code = 200)
-    {
-        http_response_code($code);
-        header("Content-Type: application/json; charset=utf-8");
-
-        echo json_encode($response);
-        exit;
+        $this->response->setData($methodRS->serialize());
+        $this->response->send();
     }
 }

@@ -1,19 +1,18 @@
 <?php
 
-namespace Ironex\Schema\Request\Parameter\ObjectParameter;
-
 use Ironex\Schema\Request\Enum\ErrorEnum;
 use Ironex\Schema\Request\Enum\ParameterTypeEnum;
 use Ironex\Schema\Request\Parameter\ArrayParameter\ArrayParameterInterface;
+use Ironex\Schema\Request\Parameter\ObjectParameter\ObjectParameterInterface;
 use Ironex\Schema\Request\Parameter\ParameterInterface;
 use Ironex\Schema\Request\Parameter\ScalarParameter\ScalarParameterInterface;
 
 abstract class AbstractObjectParameter implements ObjectParameterInterface, ParameterInterface
 {
     /**
-     * @var array
+     * @var object
      */
-    protected $errors = [];
+    protected $errors;
 
     /**
      * @var string
@@ -36,22 +35,27 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
      */
     public function __construct(string $name)
     {
+        $this->errors = (object) [];
         $this->name = $name;
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function getDefinition(): array
+    public function getDefinition(): object
     {
-        $definition = [];
+        $definition = (object) [];
 
-        $definition[ErrorEnum::REQUIRED] = $this->isRequired();
-        $definition[ErrorEnum::TYPE] = ParameterTypeEnum::OBJECT;
+        $definition->{ErrorEnum::REQUIRED} = $this->isRequired();
+        $definition->{ErrorEnum::TYPE} = ParameterTypeEnum::OBJECT;
 
-        foreach($this->parameters as $parameter)
+        if($this->parameters)
         {
-            $definition["parameters"][$parameter->getName()] = $parameter->getDefinition();
+            $definition->parameters = (object) [];
+            foreach($this->parameters as $parameter)
+            {
+                $definition->parameters->{$parameter->getName()} = $parameter->getDefinition();
+            }
         }
 
         return $definition;
@@ -63,22 +67,21 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
      */
     public function addError(string $error, $constraint = true): void
     {
-        $this->errors[$error] = $constraint;
+        $this->errors->{$error} = $constraint;
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function getErrors(): array
+    public function getErrors(): object
     {
-        if($this->errors)
-        {
-            return [
-                "errors" => $this->errors
-            ];
-        }
+        $errorsObject = (object) [];
 
-        $errors = [];
+        if(get_object_vars($this->errors))
+        {
+            $errorsObject->errors = $this->errors;
+            return $errorsObject;
+        }
 
         foreach($this->parameters as $parameter)
         {
@@ -86,16 +89,17 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
 
             if($parameterErrors)
             {
-                $errors["parameters"][$parameter->getName()] = $parameterErrors;
+                $this->errors->parameters->{$parameter->getName()} = $parameterErrors;
             }
         }
 
-        return $errors;
+        $errorsObject->errors = $this->errors;
+        return $errorsObject;
     }
 
     public function resetErrors(): void
     {
-        $this->errors = [];
+        $this->errors = (object) [];
     }
 
     /**
@@ -113,7 +117,6 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
     public function addParameter(ParameterInterface $parameter): ParameterInterface
     {
         $this->parameters[] = $parameter;
-
         return $parameter;
     }
 
@@ -140,16 +143,14 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
      */
     public function isValid(): bool
     {
-        $errors = $this->errors;
-
-        if($errors)
+        if(get_object_vars($this->errors))
         {
             return false;
         }
 
         foreach($this->parameters as $parameter)
         {
-            if($parameter->getErrors())
+            if(get_object_vars($parameter->getErrors()))
             {
                 return false;
             }
@@ -189,7 +190,7 @@ abstract class AbstractObjectParameter implements ObjectParameterInterface, Para
     {
         if(gettype($input) !== ParameterTypeEnum::OBJECT)
         {
-            $this->errors[ErrorEnum::TYPE] = ParameterTypeEnum::OBJECT;
+            $this->errors->{ErrorEnum::TYPE} = ParameterTypeEnum::OBJECT;
             return;
         }
 

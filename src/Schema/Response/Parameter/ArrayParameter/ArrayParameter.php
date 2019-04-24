@@ -10,9 +10,9 @@ use Ironex\Schema\Response\Parameter\ScalarParameter\ScalarParameterInterface;
 class ArrayParameter implements ArrayParameterInterface, ParameterInterface
 {
     /**
-     * @var array
+     * @var object
      */
-    private $errors = [];
+    private $errors;
 
     /**
      * @var int
@@ -56,20 +56,21 @@ class ArrayParameter implements ArrayParameterInterface, ParameterInterface
      */
     public function __construct(string $name, ParameterInterface $parameter)
     {
+        $this->errors = (object) [];
         $this->name = $name;
         $this->parameter = $parameter;
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function getDefinition(): array
+    public function getDefinition(): object
     {
-        $definition = [];
+        $definition = (object) [];
 
-        $definition[ErrorEnum::REQUIRED] = $this->isRequired();
-        $definition[ErrorEnum::TYPE] = $this->type;
-        $definition["parameter"] = $this->parameter->getDefinition();
+        $definition->{ErrorEnum::REQUIRED} = $this->isRequired();
+        $definition->{ErrorEnum::TYPE} = $this->type;
+        $definition->parameter = $this->parameter->getDefinition();
 
         return $definition;
     }
@@ -80,27 +81,27 @@ class ArrayParameter implements ArrayParameterInterface, ParameterInterface
      */
     public function addError(string $error, $constraint = true): void
     {
-        $this->errors[$error] = $constraint;
+        $this->errors->{$error} = $constraint;
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function getErrors(): array
+    public function getErrors(): object
     {
-        if(!$this->errors)
+        if(!get_object_vars($this->errors))
         {
-            return [];
+            return $this->errors;
         }
 
-        return [
-            "errors" => $this->errors
-        ];
+        $errorsObject = (object) [];
+        $errorsObject->errors = $this->errors;
+        return $errorsObject;
     }
 
     public function resetErrors(): void
     {
-        $this->errors = [];
+        $this->errors = (object) [];
     }
 
     /**
@@ -129,9 +130,12 @@ class ArrayParameter implements ArrayParameterInterface, ParameterInterface
         return $this;
     }
 
+    /**
+     * @return bool
+     */
     public function isValid(): bool
     {
-        return $this->errors ? true : false;
+        return get_object_vars($this->errors) ? true : false;
     }
 
     /**
@@ -161,21 +165,21 @@ class ArrayParameter implements ArrayParameterInterface, ParameterInterface
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function toArray(): array
+    public function serialize(): object
     {
-        $data = [];
+        $data = (object) [];
 
         foreach($this->parameters as $parameter)
         {
             if($parameter instanceof ScalarParameterInterface)
             {
-                $data[$parameter->getName()] = $parameter->getValue();
+                $data->{$parameter->getName()} = $parameter->getValue();
             }
             else
             {
-                $data[$parameter->getName()] = $parameter->toArray();
+                $data->{$parameter->getName()} = $parameter->serialize();
             }
         }
 
@@ -188,13 +192,13 @@ class ArrayParameter implements ArrayParameterInterface, ParameterInterface
 
         if($this->maxItemCount !== null && $parameterCount > $this->maxItemCount)
         {
-            $this->errors[ErrorEnum::MAX_ITEM_COUNT] = $this->maxItemCount;
+            $this->errors->{ErrorEnum::MAX_ITEM_COUNT} = $this->maxItemCount;
             return;
         }
 
         if($this->minItemCount !== null && $parameterCount < $this->minItemCount)
         {
-            $this->errors[ErrorEnum::MIN_ITEM_COUNT] = $this->minItemCount;
+            $this->errors->{ErrorEnum::MIN_ITEM_COUNT} = $this->minItemCount;
             return;
         }
 
@@ -205,7 +209,7 @@ class ArrayParameter implements ArrayParameterInterface, ParameterInterface
 
             if(!$parameter->isValid())
             {
-                $this->errors[$i] = $parameter->getErrors();
+                $this->errors->{"item" . $i} = $parameter->getErrors();
                 continue;
             }
         }

@@ -25,6 +25,6 @@ class Api extends AbstractApi
     public function options(): void
     {
         $this->response->setData($this->getDefinition());
-        $this->response->send(200, ["Access-Control-Allow-Methods" => "POST, DELETE, OPTIONS, GET, PUT"]);
+        $this->response->send(200, ["Access-Control-Allow-Methods" => $this->getAllowedRequestMethods()]);
     }
 }

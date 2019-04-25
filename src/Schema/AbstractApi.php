@@ -23,6 +23,29 @@ abstract class AbstractApi
     private $container;
 
     /**
+     * @return array
+     */
+    public function getAllowedRequestMethods(): array
+    {
+        $allowedRequestMethods = [];
+
+        foreach($this->getResources() as $resource)
+        {
+            foreach($resource->getRequestMethodNames() as $requestMethod)
+            {
+                $requestMethod = RequestMethodEnum::CRUD_TO_REQUEST_METHOD[$requestMethod];
+
+                if(!in_array($requestMethod, $allowedRequestMethods))
+                {
+                    $allowedRequestMethods[] = $requestMethod;
+                }
+            }
+        }
+
+        return $allowedRequestMethods;
+    }
+
+    /**
      * @return object
      */
     public function getDefinition(): object
